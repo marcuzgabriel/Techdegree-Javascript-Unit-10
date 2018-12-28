@@ -1,6 +1,7 @@
 import {
     AUTH_USER,
-    CREATE_USER  
+    CREATE_USER,
+    LOGOUT_USER  
 } from './types';
 
 export const userAuth = () => async (dispatch, getState, api) => {
@@ -73,4 +74,43 @@ export const createUser = ( formData ) => async (dispatch, getState, api) => {
     }
 }
 
+export const logoutUser = () => async (dispatch, getState, api) => {
 
+    try {
+
+      
+        // Make connection to the API proxy
+        const res = await api.get('/users/logout');
+
+        // Get the result
+        const data = await res.data
+    
+        // Send back a response to the client
+        if (data) {
+            dispatch({
+                type: LOGOUT_USER,
+                payload: data
+            });
+        }
+
+        setTimeout(() => {
+            // Empty the auth reducer
+            dispatch({
+                type: AUTH_USER,
+                payload: null
+            });
+        }, 2000);
+
+    } catch (error) {
+        // If there is an error then find the response
+        if (error.response) {
+            const data = await error.response.data;
+            if (data) {
+                dispatch({
+                    type: LOGOUT_USER,
+                    payload: data
+                });
+            }
+        }
+    }
+}

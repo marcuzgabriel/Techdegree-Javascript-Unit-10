@@ -84,8 +84,6 @@ app.get('*', (req, res) => {
         const context = {};
         const content = renderer(req, store, context);
 
-        console.log(store);
-      
         // If the user is not validated
         if(context.url) {
             return res.redirect(302, context.url)

@@ -92,7 +92,10 @@ userRoute.post("/", (req, res, next) => {
 userRoute.get('/logout', (req, res, next) => {
   req.logout();
   res.clearCookie('connect.sid');
-  res.redirect('/');
+  res.status(201).json({
+    status: 201,
+    message: "Bye bye... Logging you out!"
+  });
 });
 
 // Auth

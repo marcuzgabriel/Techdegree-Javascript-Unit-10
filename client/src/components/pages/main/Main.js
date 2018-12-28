@@ -2,7 +2,8 @@ import React, { Component } from 'react' // In order to
 import { connect } from "react-redux"; // Connect to states - a react redux method
 import { testReducer } from '../../actions';
 import { Wrapper } from '../../../../public/css/Global';
-import { userAuth } from "../../actions";
+import { userAuth, logoutUser } from "../../actions";
+import { withRouter } from 'react-router-dom';
 
 // Components
 import Header from '../header/Header';
@@ -14,51 +15,49 @@ class Main extends Component {
         super(props);
         
         this.state = { 
-            auth: this.props.auth,    
-            actions: {
-                isSearch: false
-            },
-            testreducer: this.props.testReducer         
+           
         }
     }
     
-    //////////////////////////////
-    // REDUCERS                 //
-    //////////////////////////////
-    updateUserInfo(value) {
-       let { testreducer } = this.state;
-       testreducer(value);
+    ///////////////////////////
+    // REDUCERS              //
+    ///////////////////////////
+
+    /* Ensures that we make a call to the database to check for userAuth each time we load
+    this component. If there is an auth then we want it to affect the state for later manipulation
+    with the update component lifecycle. */
+    getUserAuth() {
+        const { userAuth } = this.props;
+        userAuth();
     }
 
-    //////////////////////////////
-    // CLICK HANDLERS           //
-    //////////////////////////////
-   
-    searchClick(e) {
+    ///////////////////////////
+    // CLICK HANDLERS        //
+    ///////////////////////////
+
+    logoutBtn(e) {
         e.preventDefault();
-     
-        this.setState(prevState => ({
-            actions: {
-                ...prevState.actions,
-                isSearch: !this.state.actions.isSearch
-            }
-        }));
-
+        const { logoutUser } = this.props;
+        logoutUser();
     }
+
+    ///////////////////////////
+    // COMPONENT LIFE CYCLES //
+    ///////////////////////////
 
     componentDidMount() {
-        const { userAuth } = this.props;
-        
+        this.getUserAuth(); // Get the user auth
     }
 
     render() { 
-        const {auth} = this.props;
 
         return (
             <div>
                 <Wrapper>
                     <Header 
                         auth={this.props.auth}
+                        logout={this.logoutBtn.bind(this)}
+                        logoutUser={this.props.logout}
                     />
                     <MainContent />
                 </Wrapper>  
@@ -69,15 +68,17 @@ class Main extends Component {
     }
 }
 
+// Stores the user auth
 function loadData(store){
     return store.dispatch(userAuth());
 }
 
-function mapStateToProps({auth}) {
-    return {auth};
+// Makes sure that we can get the auth as a prop
+function mapStateToProps({auth, logout}) {
+    return {auth, logout};
 }
  
 export default {
     loadData,
-    component: connect(mapStateToProps, {userAuth})(Main) 
+    component: connect(mapStateToProps, {userAuth, logoutUser})(withRouter(Main)) 
 }
