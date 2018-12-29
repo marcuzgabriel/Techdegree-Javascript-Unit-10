@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 
-// Import components
-import Header from '../../header/Header';
-
 class CreateCourse extends Component {
     constructor(props) {
         super(props);
@@ -11,7 +8,6 @@ class CreateCourse extends Component {
     render() { 
         return (
             <div>
-                <Header />
                 <div className="bounds course--detail">
                     <h1>Create Course</h1>
                     <div>
@@ -51,7 +47,7 @@ class CreateCourse extends Component {
                             </ul>
                         </div>
                         </div>
-                        <div className="grid-100 pad-bottom"><button className="button" type="submit">Create Course</button><button class="button button-secondary" onclick="event.preventDefault(); location.href='index.html';">Cancel</button></div>
+                        <div className="grid-100 pad-bottom"><button className="button" type="submit">Create Course</button><button className="button button-secondary">Cancel</button></div>
                     </form>
                     </div>
                 </div>

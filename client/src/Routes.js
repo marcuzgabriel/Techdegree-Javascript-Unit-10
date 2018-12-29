@@ -6,7 +6,6 @@ import CreateCourse from "./components/pages/subpages/CreateCourse/CreateCourse"
 import NotFound from "./components/pages/subpages/NotFound/NotFound";
 
 
-
 export default [
     {
         ...App,

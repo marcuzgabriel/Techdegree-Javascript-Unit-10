@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { createUser } from '../../../actions';
  
 // Import components 
-import Header from '../../header/Header';
 import CreateUserForm from './CreateUser';
 
 class Signup extends Component {
@@ -18,7 +17,6 @@ class Signup extends Component {
     render() { 
         return ( 
             <div> 
-                <Header />
                 <div className="bounds">
                     <div className="grid-33 centered signin">
                     <h1>Sign Up</h1>

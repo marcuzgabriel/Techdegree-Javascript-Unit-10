@@ -116,12 +116,13 @@ userRoute.post('/login', (req, res, next) => {
     } else {
       req.logIn(user, (err) => {
         if (err) { return next(err); }
-        res.status(200);
-        res.location("/");
-        res.end();
+        res.status(200).json({
+          status: 200,
+          message: "You have succesfully logged in!"
+        });
       });
     }
-  })(req, res, next);
+  })(req, res, next)
 });
 
 // Get a specific user

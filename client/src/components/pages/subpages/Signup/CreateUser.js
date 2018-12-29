@@ -78,9 +78,9 @@ class CreateUserForm extends Component {
 
                 {/* Error handler */}
                 {hasError &&
-                <ErrorContainer>
-                    {error}
-                </ErrorContainer>
+                    <ErrorContainer>
+                        {error}
+                    </ErrorContainer>
                 }
                 
             </div>
@@ -93,7 +93,7 @@ class CreateUserForm extends Component {
         const { createUserReducer } = this.props;
         createUserReducer(props);
 
-        // Reset all states and start the loader
+        // Start the loader
         this.setState({
             isLoading: true
         });
@@ -130,13 +130,7 @@ class CreateUserForm extends Component {
                     isSuccess: true,
                     statusMsg: createUserState.message
                 });        
-                this.props.reset();  
-
-                // Redirect the user to the front page
-                setTimeout(() => {
-                    this.props.history.push("/");
-                }, 2000);
-               
+                this.props.reset();               
             }
         }
     }
@@ -170,7 +164,7 @@ const validate = values => {
     const errors = {}    
 
     // First name
-    if (!values.firstName ||values.firstName.trim() === '') {
+    if (!values.firstName || values.firstName.trim() === '') {
         errors.firstName = 'Please fill in your firstname'
     }
 
@@ -183,6 +177,16 @@ const validate = values => {
 
     if (!values.emailAddress || values.emailAddress.trim() === '') {
         errors.emailAddress = 'Please fill in your email address'
+    }
+
+    // Check email format
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    if (!validateEmail(values.emailAddress)) {
+        errors.emailAddress = 'Wrong email format'
     }
 
     // Password
@@ -205,7 +209,7 @@ const validate = values => {
         errors.confirmPassword = 'The two passwords dont match'
     }
     
-    return errors
+    return errors;
 
 }
 

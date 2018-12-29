@@ -1,7 +1,8 @@
 import {
     AUTH_USER,
     CREATE_USER,
-    LOGOUT_USER  
+    LOGOUT_USER,
+    SIGNIN_USER  
 } from './types';
 
 export const userAuth = () => async (dispatch, getState, api) => {
@@ -21,7 +22,7 @@ export const userAuth = () => async (dispatch, getState, api) => {
             const data = await error.response.data;
             if (data) {
                 dispatch({
-                    type: CREATE_USER,
+                    type: AUTH_USER,
                     payload: data
                 });
             }
@@ -77,8 +78,13 @@ export const createUser = ( formData ) => async (dispatch, getState, api) => {
 export const logoutUser = () => async (dispatch, getState, api) => {
 
     try {
+        /* Initialize with an empty reducer - the user might test your login system and
+        login and logout several times. If you don't empty the reducer, then it wont work properly.*/
+        dispatch({
+            type: LOGOUT_USER,
+            payload: null
+        });
 
-      
         // Make connection to the API proxy
         const res = await api.get('/users/logout');
 
@@ -93,6 +99,7 @@ export const logoutUser = () => async (dispatch, getState, api) => {
             });
         }
 
+        // Wait a couple of seconds before emptying the AUTH_USER
         setTimeout(() => {
             // Empty the auth reducer
             dispatch({
@@ -114,3 +121,52 @@ export const logoutUser = () => async (dispatch, getState, api) => {
         }
     }
 }
+
+export const signinUser = (formData) => async (dispatch, getState, api) => {
+
+    try {
+        /* Initialize with an empty reducer - the user might test your login system and
+        login and logout several times. If you don't empty the reducer, then it wont work properly.*/
+            dispatch({
+            type: SIGNIN_USER,
+            payload: null
+        });
+
+        // Make connection to the API proxy
+        const res = await api.post('/users/login', {
+            data: formData
+        });
+
+        // Get the result
+        const data = await res.data
+    
+        // Send back a response to the client
+        if (data) {
+            dispatch({
+                type: SIGNIN_USER,
+                payload: data
+            });
+        }
+       
+
+    } catch (error) {
+        // If there is an error then find the response
+        if (error.response) {
+            /* Initialize with an empty reducer - the user might test your login system and
+            login and logout several times. If you don't empty the reducer, then it wont work properly.*/
+            dispatch({
+                type: SIGNIN_USER,
+                payload: null
+            });
+
+            const data = await error.response.data;
+            if (data) {
+                dispatch({
+                    type: SIGNIN_USER,
+                    payload: data
+                });
+            }
+        }
+    }
+}
+

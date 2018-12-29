@@ -1,29 +1,37 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-// Import components
-import Header from '../../header/Header';
+import { signinUser, userAuth } from '../../../actions';
+import { connect } from 'react-redux';
+
+// import components
+import SigninForm from './SigninForm';
 
 class Signin extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
     }
+
+    loginBtn(e) {
+        e.preventDefault();
+        const { signinUser } = this.props;
+        signinUser();
+    }
+
     render() { 
+        
         return ( 
             <div>
-                <Header />
                 <div className="bounds">
                     <div className="grid-33 centered signin">
                     <h1>Sign In</h1>
                     <div>
-                        <form>
-                        <div><input id="emailAddress" name="emailAddress" type="text" className="" placeholder="Email Address" value="" /></div>
-                        <div><input id="password" name="password" type="password" className="" placeholder="Password" value="" /></div>
-                        <div className="grid-100 pad-bottom">
-                            <button className="button" type="submit">Sign In</button>
-                            <Link title="Welcome" to="/" className="button button-secondary">Cancel</Link>
-                        </div>
-                        </form>
+                        <SigninForm 
+                            signinUserReducer={this.props.signinUser} // Signin user reducer
+                            signinUserState={this.props.signin} // Check the user state
+                            getUserAuth={this.props.userAuth}
+                            auth={this.props.auth}
+                        />
                     </div>
                     <p>&nbsp;</p>
                     <p>Don't have a user account?
@@ -37,6 +45,10 @@ class Signin extends Component {
     }
 }
  
+function mapStateToProps({auth, logout, signin}) {
+    return { auth, logout, signin };
+}
+
 export default {
-    component: Signin
+    component: connect(mapStateToProps, { signinUser, userAuth })(Signin)
 }

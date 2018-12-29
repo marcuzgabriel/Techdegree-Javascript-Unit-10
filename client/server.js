@@ -14,10 +14,10 @@ const app = express();
 
 app.use('/api', proxy('http://localhost:5000', {
     // //this second argument in proxy is not nessesary in your own projects
-    // proxyReqOptDecorator(opts){
-    //     opts.headers['x-forwarded-host'] = 'localhost:3000';
-    //     return opts;
-    // }
+    proxyReqOptDecorator(opts){
+        opts.headers['x-forwarded-host'] = 'localhost:3000';
+        return opts;
+    }
 }));
 
 // Make a static connection to the public 

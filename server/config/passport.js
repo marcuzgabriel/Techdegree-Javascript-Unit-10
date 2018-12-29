@@ -5,7 +5,7 @@ const Users = require('../models/models').Users;
 
 // Passport signup
 passport.use('local-signup', new LocalStrategy({
-        usernameField : 'data[emailAddress]',
+        usernameField: 'data[emailAddress]',
         passwordField: 'data[password]',
         passReqToCallback: true
     },
