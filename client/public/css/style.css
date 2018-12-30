@@ -471,6 +471,7 @@ p {
   font-size: 18px;
   color: #b1a5c4;
   font-weight: 100;
+  width: 100%;
 }
 
 .course--login p {
@@ -789,4 +790,23 @@ input:focus {
 /* reduce bottom margin on the course description textarea element */
 .course--description textarea {
   margin-bottom: 20px;
+}
+
+.no_courses {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+  margin: 50px;
+}
+
+.loaderDiv {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loaderDiv p {
+  padding-left: 6px;
 }

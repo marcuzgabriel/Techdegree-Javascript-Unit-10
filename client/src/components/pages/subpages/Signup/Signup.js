@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 // Create connection to the reducers
-import { createUser } from '../../../actions';
+import { createUser, userAuth } from '../../../actions';
  
 // Import components 
 import CreateUserForm from './CreateUser';
@@ -24,7 +24,9 @@ class Signup extends Component {
                         <CreateUserForm 
                             createUserReducer={this.props.createUser} // create user reducer
                             createUserState={this.props.create_user} // create user state (check status)
-                        />
+                            getUserAuth={this.props.userAuth}
+                            auth={this.props.auth}
+                       />
                     </div>
                     <p>&nbsp;</p>
                     <p>Already have a user account?
@@ -37,11 +39,11 @@ class Signup extends Component {
     }
 }
 
-function mapStateToProps({form, create_user}) {
-    return {form, create_user};
+function mapStateToProps({auth, form, create_user}) {
+    return {auth, form, create_user};
 }
  
 export default {
-    component: connect(mapStateToProps, {createUser})(Signup)
+    component: connect(mapStateToProps, {createUser, userAuth})(Signup)
 }
     

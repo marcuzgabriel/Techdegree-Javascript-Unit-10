@@ -11,9 +11,8 @@ passport.use('local-signup', new LocalStrategy({
     },
     (req, email, password, done) => {
         
-     
         Users.getUserByUsername(email, (err, user) => {
-
+           
             // If an user exists with such an email throw an error
             if (err) { return next(err); }
             if (user) return done(null, false);

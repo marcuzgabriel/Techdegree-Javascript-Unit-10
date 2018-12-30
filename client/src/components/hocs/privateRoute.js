@@ -9,9 +9,10 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Route } from 'react-router';
 import { Redirect, withRouter } from "react-router-dom";
-import { userAuth } from "../actions";
 import NotFound from "../pages/subpages/NotFound/NotFound";
-
+import {
+    Loader 
+} from '../../../public/css/Global';
 export default (ComposedComponent) => {
     class ProtectedRoute extends Component {
         render() {
@@ -20,8 +21,7 @@ export default (ComposedComponent) => {
                     return <Redirect to="/forbidden" />
                 break;
                 case null:
-                    <div>Loading...</div>
-            
+                    return <div className="loaderDiv"><p>Loading...</p><Loader/></div>
                 default:
                     return <ComposedComponent {...this.props} />
             }
@@ -31,5 +31,5 @@ export default (ComposedComponent) => {
     function mapStateToProps({auth}){
         return {auth};
     }
-    return connect(mapStateToProps, {userAuth})(ProtectedRoute);
+    return connect(mapStateToProps)(ProtectedRoute);
 };

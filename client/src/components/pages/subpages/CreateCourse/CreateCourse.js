@@ -1,54 +1,55 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { userAuth, createCourse } from "../../../actions";
+import privateRoute from '../../../hocs/privateRoute';
+
+// Import component
+import CreateCourseForm from './CreateCourseForm';
+
+
+/* Readme
+If a component is dependent on an authenticated through a HOC. Then you need to 
+run the getUserAuth reducer on componentDidMount. This reducer ensures to call
+the API and render the component. If you dont call the reducer, then the component
+will not know what props.auth is. */
 
 class CreateCourse extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
     }
+    
+    ///////////////////////////
+    // REDUCERS              //
+    ///////////////////////////
+
+    /* Ensures that we make a call to the database to check for userAuth each time we load
+    this component. If there is an auth then we want it to affect the state for later manipulation
+    with the update component lifecycle. */
+    getUserAuth() {
+        const { userAuth } = this.props;
+        userAuth();
+    }
+
+    ///////////////////////////
+    // COMPONENT LIFE CYCLES //
+    ///////////////////////////
+
+    componentDidMount() {
+        this.getUserAuth(); // Get the user auth
+    }
+
     render() { 
         return (
             <div>
                 <div className="bounds course--detail">
                     <h1>Create Course</h1>
                     <div>
-                    <div>
-                        <h2 className="validation--errors--label">Validation errors</h2>
-                        <div className="validation-errors">
-                        <ul>
-                            <li>Please provide a value for "Title"</li>
-                            <li>Please provide a value for "Description"</li>
-                        </ul>
-                        </div>
-                    </div>
-                    <form>
-                        <div className="grid-66">
-                        <div className="course--header">
-                            <h4 className="course--label">Course</h4>
-                            <div><input id="title" name="title" type="text" className="input-title course--title--input" placeholder="Course title..."
-                                value="" /></div>
-                            <p>By Joe Smith</p>
-                        </div>
-                        <div className="course--description">
-                            <div><textarea id="description" name="description" className="" placeholder="Course description..."></textarea></div>
-                        </div>
-                        </div>
-                        <div className="grid-25 grid-right">
-                        <div className="course--stats">
-                            <ul className="course--stats--list">
-                            <li className="course--stats--list--item">
-                                <h4>Estimated Time</h4>
-                                <div><input id="estimatedTime" name="estimatedTime" type="text" className="course--time--input"
-                                    placeholder="Hours" value="" /></div>
-                            </li>
-                            <li className="course--stats--list--item">
-                                <h4>Materials Needed</h4>
-                                <div><textarea id="materialsNeeded" name="materialsNeeded" className="" placeholder="List materials..."></textarea></div>
-                            </li>
-                            </ul>
-                        </div>
-                        </div>
-                        <div className="grid-100 pad-bottom"><button className="button" type="submit">Create Course</button><button className="button button-secondary">Cancel</button></div>
-                    </form>
+                       <CreateCourseForm 
+                            auth={this.props.auth} // Parse through the auth props
+                            createCourseReducer={this.props.createCourse} // Create course reducer
+                            createCourseState={this.props.create_course} // Checks wether the course is uploadet or not
+                       />
                     </div>
                 </div>
             </div>
@@ -56,7 +57,11 @@ class CreateCourse extends Component {
           );
     }
 }
+
+function mapStateToProps({auth, create_course}) {
+    return {auth, create_course};
+}
  
 export default {
-    component: CreateCourse
+    component: connect(mapStateToProps, {userAuth, createCourse})(privateRoute(CreateCourse))
 }

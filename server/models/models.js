@@ -156,7 +156,13 @@ UserSchema.statics.getUserByUsername = function(email, callback) {
 
 // Find the user by id and throw back a callback
 UserSchema.statics.getUserById = function(id, callback) {
-    Users.findById(id, callback);
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        Users.findById(id, callback);
+    } else {
+        const err = new Error("There is no user with such id...");
+        err.status = 404;
+        throw err;
+    }
 }
 
 
@@ -180,12 +186,19 @@ CourseSchema.statics.getAllCourses = function (callback) {
 
 // Get course by its ID
 CourseSchema.statics.findCourseById = function (id, callback) {
-    Courses.findById(id)
-        .populate("user", "firstName lastName")
+    
+    if (mongoose.Types.ObjectId.isValid(id)) {
+        Courses.findById(id)
+        .populate("user", "firstName lastName emailAddress")
         .exec(function (err, course) {
             if (err) throw err;
             callback(null, course);
         });
+    } else {
+        const err = new Error("No course matches that id...");
+        err.status = 404;
+        throw err;
+    }  
 }
 
 

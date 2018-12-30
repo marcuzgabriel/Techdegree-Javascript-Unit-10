@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Field, reduxForm, reset } from 'redux-form';
 import _ from 'lodash';
-import { withRouter } from "react-router-dom";
 
 // Local styles
 import {
@@ -16,7 +15,7 @@ import { createUser } from '../../../actions';
 import { create } from 'domain';
 
 class CreateUserForm extends Component {
-    constructor(props, context) {
+    constructor(props) {
         super(props);
         this.state = {
             isLoading: false,
@@ -88,10 +87,11 @@ class CreateUserForm extends Component {
 
     }    
 
-    submitForm( props ) {
+    submitForm = async ( props ) => {
 
-        const { createUserReducer } = this.props;
-        createUserReducer(props);
+        const { createUserReducer, getUserAuth } = this.props;
+        await createUserReducer(props);
+        await getUserAuth(); // If there is a user then can get the auth property. 
 
         // Start the loader
         this.setState({
@@ -123,6 +123,16 @@ class CreateUserForm extends Component {
                     isSuccess: false,
                     statusMsg: createUserState.message
                 });
+
+                /* Reset the states after 2 sec else it will not show any other errors */
+
+                setTimeout(() => {
+                    this.setState({
+                        isError: false,
+                        statusMsg: ""
+                    });
+                }, 2000);
+
             } else {
                 this.setState({
                     isLoading: false,
@@ -130,7 +140,13 @@ class CreateUserForm extends Component {
                     isSuccess: true,
                     statusMsg: createUserState.message
                 });        
-                this.props.reset();               
+
+                // After everything is successful then push the user to the main route
+                if (this.props.auth) {
+                    setTimeout(() => {
+                        this.props.history.push("/");
+                    }, 2000);
+                }              
             }
         }
     }

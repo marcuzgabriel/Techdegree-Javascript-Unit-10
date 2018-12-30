@@ -4,11 +4,19 @@ import CreateUserReducer from './CreateUserReducer';
 import AuthUserReducer from './AuthUserReducer';
 import LogoutUserReducer from "./LogoutUserReducer";
 import SigninUserReducer from "./SigninUserReducer";
+import CreateCourseReducer from "./CreateCourseReducer";
+import GetCoursesReducer from "./GetCoursesReducer";
+import GetSingleCourseReducer from "./GetSingleCourseReducer";
+import DeleteCourseReducer from "./DeleteCourseReducer";
 
 export default combineReducers({
     form: formReducer,
     create_user: CreateUserReducer,
     logout: LogoutUserReducer,
     signin: SigninUserReducer,
-    auth: AuthUserReducer
+    auth: AuthUserReducer,
+    create_course: CreateCourseReducer,
+    courses: GetCoursesReducer,
+    single_course: GetSingleCourseReducer,
+    delete_course: DeleteCourseReducer
 });

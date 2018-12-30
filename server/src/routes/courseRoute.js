@@ -49,28 +49,27 @@ courseRoute.post("/", (req, res, next) => {
 
     // If the user is allready logged in then
     if (res.locals.user) {
-       
         /* The user can only create a course if his logged in. If the user is not logged
         in then a error message will show. */
         const courseData = {
             user: res.locals.user._id,
-            ...req.body
+            ...req.body.data
         };
 
         const newCourse = new Courses(courseData);
         newCourse.save((err, course) => {
             if(err) return next(err);
-            res.status(201);
-            res.location("/");
-            res.end();
+            console.log(course);
+            res.status(201).json({
+                status: 201,
+                message: "Course created succesfully"
+            });
         });
     } else {
         const err = new Error("You are not authenticated. Please login with your username and password by going to the POST route /api/users/login");
         err.status = 404;
         next(err);
     }
-   
-
 });
 
 // Returns a the course (including the user that owns the course) for the provided course ID
@@ -134,9 +133,7 @@ courseRoute.delete("/:cID",(req, res, next) => {
                 if (err) return next(err);
                 course.delete(req.body, (err, course) => {
                     if (err) return next(err);
-                    res.status(204);
-                    res.location("/");
-                    res.json(course);
+                    res.status(204).end();
                 });
             });
         } else {

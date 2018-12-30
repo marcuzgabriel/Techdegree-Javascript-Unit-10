@@ -28,9 +28,10 @@ class Header extends Component {
 
         // Wait 2 sec then redirect
         setTimeout(() => {
-            this.props.history.push("/sign-in");
+            this.props.history.push("/signin");
         }, 2000);
     }
+
 
     render() { 
         return ( 
@@ -40,8 +41,8 @@ class Header extends Component {
                     <h1 className="header--logo">Courses</h1>
                 </Link>
                 <nav>
-                    {this.props.auth ? <span className="user--login">{`Welcome ${this.props.auth.firstName} ${this.props.auth.lastName} `}</span> : <Link title="Sign up" to="/sign-up" >Sign Up</Link> }
-                    {this.props.auth ? <span className="user--login" onClick={this.logoutBtn.bind(this)}>Sign out</span> : <Link title="Sign in" to="/sign-in" >Sign In</Link> }
+                    {this.props.auth ? <span className="user--login">{`Welcome ${this.props.auth.firstName} ${this.props.auth.lastName} `}</span> : <Link title="Sign up" to="/signup" >Sign Up</Link> }
+                    {this.props.auth ? <span className="user--login" onClick={this.logoutBtn.bind(this)}>Sign out</span> : <Link title="Sign in" to="/signin" >Sign In</Link> }
                     {this.props.logout ? <Error>{this.props.logout.message}</Error> : null }
                 </nav>
                 </div>

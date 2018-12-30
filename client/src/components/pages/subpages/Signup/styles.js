@@ -55,3 +55,7 @@ export const Success = styled.div`
     animation: ${slideUpAnimation} 1s forwards;
     animation-delay: 2s;
 `;
+
+export const TextArea = styled.textarea`
+
+`;

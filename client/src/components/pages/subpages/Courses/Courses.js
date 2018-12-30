@@ -1,12 +1,11 @@
 import React, { Component } from 'react' // In order to
 import { connect } from "react-redux"; // Connect to states - a react redux method
-import { Wrapper } from '../../../../public/css/Global';
-import { getCourses, userAuth } from "../../actions";
-import privateRoute from "../../hocs/privateRoute";
+import { Wrapper } from '../../../../../public/css/Global';
+import { getCourses, userAuth } from "../../../actions";
+
 // Components
-import MainContent from '../subpages/Maincontent/MainContent';
+import MainContent from '../../subpages/Maincontent/MainContent';
 // Import components
-import { Loader } from '../../../../public/css/Global';
 
 class Main extends Component {
     constructor(props) {
