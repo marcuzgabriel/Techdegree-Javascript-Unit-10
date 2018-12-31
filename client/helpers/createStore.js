@@ -6,8 +6,7 @@ import reducers from "../src/components/reducers";
 export default (req) => {
  
     const axiosInstance = axios.create({
-        // baseURL: 'https://wsa-api-nytnyt.herokuapp.com',
-        baseURL: 'http://localhost:5000',
+        baseURL: process.env.API_URL,
         headers: {cookie: req.get('cookie') || ''}
     });
 

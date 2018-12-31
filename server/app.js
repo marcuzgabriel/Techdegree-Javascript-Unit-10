@@ -1,6 +1,7 @@
 'use strict';
 
 // load modules
+const cookieSession = require('cookie-session');
 const express = require('express'); // Server
 const morgan = require('morgan'); // Error handling
 const userRoute = require('./src/routes/userRoute'); // Loading routes
@@ -14,6 +15,9 @@ const flash = require("connect-flash"); // Something used for storing messages..
 const session = require("express-session"); // Session handleing
 const passport = require("passport"); // Auth handling
 const LocalStrategy = require("passport-local").Strategy;
+const cors = require('cors');
+require("@babel/polyfill");
+require('dotenv').config();
  
 
 // Configure mongoose
@@ -35,18 +39,35 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 
 // Create the Express app
 const app = express();
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false })) // Parse application/x-www-form-urlencoded
 app.use(bodyParser.json()) // Parse application/json
+
+if (process.env.NODE_ENV === 'production') {
+  app.get('*.js', function (req, res, next) {
+      req.url = req.url + '.gz';
+      res.set('Content-Encoding', 'gzip');
+      next();
+  });
+}
 
 // Setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
 // Sessions
-app.use(session({
-  secret: 'secret',
-  saveUninitialized: false,
-  resave: false
-}));
+app.use(
+  cookieSession({
+      name: 'td10-login',
+      maxAge: 30*24*60*60*1000, 
+      keys: [process.env.cookieKey],
+  })
+)
+
+// app.use(session({
+//   secret: process.env.SECRET,
+//   saveUninitialized: false,
+//   resave: false
+// }));
 
 app.use(passport.initialize());
 app.use(passport.session());

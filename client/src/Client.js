@@ -1,6 +1,3 @@
-//starter point for the clientside application
-import "@babel/polyfill";
-import "../public/css/style.css"; // Include your global style sheet from Team tree house.
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";

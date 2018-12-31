@@ -1,3 +1,13 @@
+
+/* Readme 
+In order to achieve cross browser functionality with all browsers - also IE11. 
+Then it is not recommended to use the async await approach. IE11 don't tolerate this
+behaviour. Furthermore, it should be mentioned that redirecting directly in a 
+component with (this.props.history.push("/path") will not work with IE11. All
+redirections should be done in this action index file and the appraoch should be
+with fetch and then. 
+*/
+
 import {
     AUTH_USER,
     CREATE_USER,
@@ -9,163 +19,60 @@ import {
     DELETE_COURSE
 } from './types';
 
-export const userAuth = () => async (dispatch, getState, api) => {
-    try {
-        
-        const res = await api.get('/users/auth');
-
-        // Get the result
-        const data = await res.data
-        
-        dispatch({
-            type: AUTH_USER,
-            payload: data
-        });
-
-    } catch (error) {
-        if (error.response) {
-            const data = await error.response.data;
-            if (data) {
-                dispatch({
-                    type: AUTH_USER,
-                    payload: data
-                });
-            }
-        }
-    }
-}
-
-export const createUser = ( formData ) => async (dispatch, getState, api) => {
-
-    /* When handling - one time events; in this case a user creation form - then it 
-    is commonly good practice to reset the reducer first else you will end up with 
-    two dispatches; one for the result and one for the error. */
-
-    try {
-
-        /* Reset the reducer so its empty - it might be the second time the user tries to 
-        fill in the form because he used an email which is allready in the database. If this
-        is the case then the reducer is not empty which will interupt the dispatch. */
-        dispatch({
-            type: CREATE_USER,
-            payload: null
-        });
-
-        // Make connection to the API proxy
-        const res = await api.post('/users', {
-            data: formData
-        });
-
-        // Get the result
-        const data = await res.data
-      
-        // Send back a response to the client
-        if (data) {
-            dispatch({
-                type: CREATE_USER,
-                payload: data
-            });
-        }
-        
-    } catch (error) {
-        // If there is an error then find the response
-        if (error.response) {
-            const data = await error.response.data;
-            if (data) {
-                dispatch({
-                    type: CREATE_USER,
-                    payload: data
-                });
-            }
-        }
-    }
-}
-
-export const logoutUser = () => async (dispatch, getState, api) => {
-
-    try {
-        /* Initialize with an empty reducer - the user might test your login system and
-        login and logout several times. If you don't empty the reducer, then it wont work properly.*/
-        dispatch({
-            type: LOGOUT_USER,
-            payload: null
-        });
-
-        // Make connection to the API proxy
-        const res = await api.get('/users/logout');
-
-        // Get the result
-        const data = await res.data
-    
-        // Send back a response to the client
-        if (data) {
-            dispatch({
-                type: LOGOUT_USER,
-                payload: data
-            });
-        }
-
-        // Wait a couple of seconds before emptying the AUTH_USER
-        setTimeout(() => {
-            // Empty the auth reducer
-            dispatch({
-                type: AUTH_USER,
-                payload: null
-            });
-        }, 2000);
-
-    } catch (error) {
-        // If there is an error then find the response
-        if (error.response) {
-            const data = await error.response.data;
-            if (data) {
-                dispatch({
-                    type: LOGOUT_USER,
-                    payload: data
-                });
-            }
-        }
-    }
-}
 
 export const signinUser = (formData) => async (dispatch, getState, api) => {
 
-    try {
-        /* Initialize with an empty reducer - the user might test your login system and
-        login and logout several times. If you don't empty the reducer, then it wont work properly.*/
-            dispatch({
-            type: SIGNIN_USER,
-            payload: null
-        });
+    // /* Initialize with an empty reducer - the user might test your login system and
+    // login and logout several times. If you don't empty the reducer, then it wont work properly.*/
+    // dispatch({
+    //     type: SIGNIN_USER,
+    //     payload: null
+    // });
 
-        // Make connection to the API proxy
-        const res = await api.post('/users/login', {
-            data: formData
-        });
+    // Make connection to the API proxy
+    await api.post('/users/login', {
+        data: formData
+    }).then((res) => {
+        if (res.status === 200) {
 
-        // Get the result
-        const data = await res.data
-    
-        // Send back a response to the client
-        if (data) {
+            // // If there is a user, then we want to get the auth
+            // api.get('/users/auth')
+            // .then((res) => {
+            //     if (res.status === 200) {
+            //         localStorage.setItem('user', res);
+            //     }
+            //     return res;
+            // });
+
+
             dispatch({
                 type: SIGNIN_USER,
-                payload: data
+                payload: res
             });
-        }
-       
 
-    } catch (error) {
-        // If there is an error then find the response
-        if (error.response) {
+            // This is where we set a cookie on the client side
+          
+
+            // let str = res.data.userCookie;
+            // str = str.split('=');
+            
+            // setCookie(str[0], str[1], 7);
+        
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 2000);
+        } else {
+           
+        }
+    }).catch((err) => {
+        if (err.response) {
             /* Initialize with an empty reducer - the user might test your login system and
             login and logout several times. If you don't empty the reducer, then it wont work properly.*/
             dispatch({
                 type: SIGNIN_USER,
                 payload: null
             });
-
-            const data = await error.response.data;
+            const data = err.response.data;
             if (data) {
                 dispatch({
                     type: SIGNIN_USER,
@@ -173,8 +80,130 @@ export const signinUser = (formData) => async (dispatch, getState, api) => {
                 });
             }
         }
-    }
+    });
 }
+
+
+
+
+export const userAuth = () => async (dispatch, getState, api) => {        
+    
+    api.get('/users/auth')
+    .then((res) => {
+        if (res.status === 200) {
+            dispatch({
+                type: AUTH_USER,
+                payload: res.data
+            });
+        } else {
+            console.log("Something wierd happend");
+        }
+    }).catch((err) => {
+        if (err.response) {
+            const data = err.response.data;
+            if (data) {
+                dispatch({
+                    type: AUTH_USER,
+                    payload: data
+                });
+            }
+        }
+    });
+}
+
+export const createUser = ( formData ) => async (dispatch, getState, api) => {
+
+    /* Reset the reducer so its empty - it might be the second time the user tries to 
+    fill in the form because he used an email which is allready in the database. If this
+    is the case then the reducer is not empty which will interupt the dispatch. */
+    dispatch({
+        type: CREATE_USER,
+        payload: null
+    });
+
+    // Make connection to the API proxy
+    api.post('/users', {
+        data: formData
+    }).then(res => {
+        if (res.status === 201) {
+
+            dispatch({
+                type: CREATE_USER,
+                payload: res
+            });
+
+            //Wait 2 seconds before redirecting in order to show the succes message on the client side
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 2000);
+        } else {
+           
+        }
+    }).catch((err) => {
+        // If there is an error then find the response
+        if (err.response) {
+            const data = err.response.data;
+            if (data) {
+                dispatch({
+                    type: CREATE_USER,
+                    payload: data
+                });
+            }
+        }
+    });
+}
+
+export const logoutUser = () => async (dispatch, getState, api) => {
+
+  
+    /* Initialize with an empty reducer - the user might test your login system and
+    login and logout several times. If you don't empty the reducer, then it might have old
+    data stored.*/
+    dispatch({
+        type: LOGOUT_USER,
+        payload: null
+    });
+
+    // Make connection to the API proxy
+    api.get('/users/logout')
+    .then(res => {
+        if (res.status === 201) {
+
+            dispatch({
+                type: LOGOUT_USER,
+                payload: res
+            });
+
+             // Delete the info in the auth_user reducer
+             dispatch({
+                type: AUTH_USER,
+                payload: null
+            });
+
+            //Wait 2 seconds before redirecting in order to show the succes message on the client side
+            setTimeout(() => {
+                // Redirect to the signin page
+                window.location.href = "/signin";
+            }, 2000);
+
+        } else {
+            
+        }
+    }).catch((err) => {
+        // If there is an error then find the response
+        if (err.response) {
+            const data = err.response.data;
+            if (data) {
+                dispatch({
+                    type: LOGOUT_USER,
+                    payload: data
+                });
+            }
+        }
+    });
+}
+
+
 
 export const createCourse = (formData) => async (dispatch, getState, api) => {
 

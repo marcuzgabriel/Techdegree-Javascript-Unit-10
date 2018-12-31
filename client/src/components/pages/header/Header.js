@@ -25,11 +25,6 @@ class Header extends Component {
         e.preventDefault();
         const { logoutUser } = this.props;
         logoutUser();
-
-        // Wait 2 sec then redirect
-        setTimeout(() => {
-            this.props.history.push("/signin");
-        }, 2000);
     }
 
 
@@ -43,7 +38,7 @@ class Header extends Component {
                 <nav>
                     {this.props.auth ? <span className="user--login">{`Welcome ${this.props.auth.firstName} ${this.props.auth.lastName} `}</span> : <Link title="Sign up" to="/signup" >Sign Up</Link> }
                     {this.props.auth ? <span className="user--login" onClick={this.logoutBtn.bind(this)}>Sign out</span> : <Link title="Sign in" to="/signin" >Sign In</Link> }
-                    {this.props.logout ? <Error>{this.props.logout.message}</Error> : null }
+                    {this.props.logout ? <Error>{this.props.logout.data.message}</Error> : null }
                 </nav>
                 </div>
           </div>

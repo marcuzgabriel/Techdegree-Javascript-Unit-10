@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import express from "express";
 import { matchRoutes } from "react-router-config";
 import proxy from "express-http-proxy";
@@ -12,25 +11,37 @@ const app = express();
 // CREATE A PROXY TO THE API //
 ///////////////////////////////
 
-app.use('/api', proxy('http://localhost:5000', {
-    // //this second argument in proxy is not nessesary in your own projects
-    proxyReqOptDecorator(opts){
-        opts.headers['x-forwarded-host'] = 'localhost:3000';
-        return opts;
-    }
-}));
+app.use('/api', 
+    proxy(process.env.API_URL, {
+        //this second argument in proxy is not nessesary anymore.
+        proxyReqOptDecorator(opts){
+            opts.headers['x-forwarded-host'] = process.env.FORWARD_HOST;
+            return opts;
+        }
+    })
+);
+
 
 // Make a static connection to the public 
 
 app.use(express.static('public'));
 
-//CORS handler. pr. default CORS error will take action and deny any api calls. This handles CORS
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
- });
+// //CORS handler. pr. default CORS error will take action and deny any api calls. This handles CORS
+// app.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     res.header("Cache-control", "no-cache=set-cookie");
+
+//     const getCookie = req.get('cookie');
+
+//     if (getCookie) {
+//         res.header("set-cookie", getCookie);
+//     }
+
+
+//     next();
+//  });
 
 /* How to setup your server routing with the React routing. 
 React uses paths and its own routing interigation. That is why we want to create an asynchronous connection between 

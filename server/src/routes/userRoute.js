@@ -57,7 +57,6 @@ userRoute.get("/", (req, res, next) => {
   if (res.locals.user) {
     res.status(200);
     res.json(res.locals.user);
-    console.log("Succesfully logged in!");
   } else {
     res.json("No authentication... Please login by going to the POST route /api/users/login . It might be a good idea to create a user you can login with by going to the POST route /api/users . For further information on how to login please see the documentation in the userRoute.js file");
   }
@@ -69,7 +68,7 @@ userRoute.post("/", (req, res, next) => {
   // Check if email is taken through a static mongoose method
   passport.authenticate('local-signup', (err, user, info) => {
     if (err) { return next(err); }
-  
+    
     if (!user) {
       const err = new Error("Email is taken.")
       err.status = 409;
@@ -78,6 +77,7 @@ userRoute.post("/", (req, res, next) => {
       // Establish a login session.
       req.logIn(user, (err) => {
         if (err) { return next(err); }
+      
         res.status(201).json({
           status: 201,
           message: "User creation successful!"
@@ -91,7 +91,8 @@ userRoute.post("/", (req, res, next) => {
 // Logout and delete cookies
 userRoute.get('/logout', (req, res, next) => {
   req.logout();
-  res.clearCookie('connect.sid');
+  res.clearCookie('td10-login');
+  req.session = null;
   res.status(201).json({
     status: 201,
     message: "Bye bye... Logging you out!"

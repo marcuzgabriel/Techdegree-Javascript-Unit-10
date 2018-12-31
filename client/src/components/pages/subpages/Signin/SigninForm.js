@@ -63,14 +63,14 @@ class SigninForm extends Component {
     }
 
     
-    submitForm = async ( props ) => {
+    submitForm ( props ) {
         /* In order to get a natural flow you need to use the async. When using the async
         then we wait for the signinReducer to be finished before we initialize the get Auth.
         This ensures that when we call upon the get auth prop, then its rendered correctly. */
 
         const { signinUserReducer, getUserAuth } = this.props;
-        await signinUserReducer(props); // A reducer that calls the API and checks if there is a user
-        await getUserAuth(); // If there is a user then can get the auth property. 
+        signinUserReducer(props); // A reducer that calls the API and checks if there is a user
+        // getUserAuth();
 
         // Start the loader
         this.setState({
@@ -122,22 +122,19 @@ class SigninForm extends Component {
                 }, 2000);
 
             } else {
+
                 this.setState({
                     isLoading: false,
                     isError: false,
                     isSuccess: true,
-                    statusMsg: signinUserState.message
-                });        
-                
-                /* It is very important that when pushing / redirecting to another
-                route that the auth prop has been properly loadet. Else our HOC 
-                (higher-order-component) will get confused. We dont want our HOC 
-                to render the auth. We just want it to check if there is an auth or not. */
-                if (this.props.auth) {
-                    setTimeout(() => {
-                        this.props.history.push("/");
-                    }, 2000);
+                    statusMsg: signinUserState.data.message
+                });       
+
+                const { auth } = this.props;
+                if (auth) {
+                   console.log("Auth Here", auth)
                 }
+
             }
         }
     }

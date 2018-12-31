@@ -23,7 +23,6 @@ passport.use('local-signup', new LocalStrategy({
                     if(err) return next(err);
                     
                     // Return it in the serializer
-                    console.log("User creation successful");
                     return done(null, user);
 
                 });
@@ -53,11 +52,9 @@ passport.use('local-login', new LocalStrategy({
             return done(null, false, {message: "There is no user which such email"});
     
         } else {
-            console.log("There is a user", user)
             Users.comparePasswords(password, user.password, (err, isMatch) => {
             if (err) throw err;
             if (isMatch) {
-                console.log("Login is successful");
                 return done(null, user);
             } else {
                 return done(null, false, {message: "Invalid password"});
@@ -83,6 +80,7 @@ passport.use('local-login', new LocalStrategy({
         "firstName": user.firstName,
         "lastName": user.lastName,
         "emailAddress": user.emailAddress,
+        "token": 123,
         "authenticated": true
       }
       done(err, currentUser);

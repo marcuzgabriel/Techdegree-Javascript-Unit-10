@@ -157,7 +157,12 @@ UserSchema.statics.getUserByUsername = function(email, callback) {
 // Find the user by id and throw back a callback
 UserSchema.statics.getUserById = function(id, callback) {
     if (mongoose.Types.ObjectId.isValid(id)) {
-        Users.findById(id, callback);
+        Users.findById(id)
+        .exec(function (err, user) {
+            if (err) throw err;
+            callback(null, user);
+        });
+       
     } else {
         const err = new Error("There is no user with such id...");
         err.status = 404;

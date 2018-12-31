@@ -34,11 +34,13 @@ export default (req, store, context) => {
     return `
         <!DOCTYPE html>
             <head>
+            <meta charset="UTF-8">
             ${helmet.title.toString()}
             ${helmet.meta.toString()}
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500" rel="stylesheet" type="text/css">
             <link href="https://fonts.googleapis.com/css?family=Cousine" rel="stylesheet" type="text/css">          
+            <link href="/css/style.css" rel="stylesheet" type="text/css">
             ${style}
             </head>
             <body>

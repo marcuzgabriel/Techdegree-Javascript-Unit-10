@@ -59,7 +59,6 @@ courseRoute.post("/", (req, res, next) => {
         const newCourse = new Courses(courseData);
         newCourse.save((err, course) => {
             if(err) return next(err);
-            console.log(course);
             res.status(201).json({
                 status: 201,
                 message: "Course created succesfully"

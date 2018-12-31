@@ -138,15 +138,8 @@ class CreateUserForm extends Component {
                     isLoading: false,
                     isError: false,
                     isSuccess: true,
-                    statusMsg: createUserState.message
+                    statusMsg: createUserState.data.message
                 });        
-
-                // After everything is successful then push the user to the main route
-                if (this.props.auth) {
-                    setTimeout(() => {
-                        this.props.history.push("/");
-                    }, 2000);
-                }              
             }
         }
     }

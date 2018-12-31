@@ -28,7 +28,6 @@ class Main extends Component {
     }
 
     render() { 
-        
         return (
             <div>
                 <Wrapper>

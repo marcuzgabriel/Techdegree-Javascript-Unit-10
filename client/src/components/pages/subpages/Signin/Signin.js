@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { signinUser, userAuth } from '../../../actions';
+import { signinUser } from '../../../actions';
 import { connect } from 'react-redux';
 
 // import components
@@ -10,16 +10,9 @@ class Signin extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
-    }
-
-    loginBtn(e) {
-        e.preventDefault();
-        const { signinUser } = this.props;
-        signinUser();
-    }
-
+    }    
+    
     render() { 
-        
         return ( 
             <div>
                 <div className="bounds">
@@ -50,5 +43,5 @@ function mapStateToProps({auth, logout, signin}) {
 }
 
 export default {
-    component: connect(mapStateToProps, { signinUser, userAuth })(Signin)
+    component: connect(mapStateToProps, { signinUser })(Signin)
 }

@@ -16,6 +16,7 @@ import {
 export default (ComposedComponent) => {
     class ProtectedRoute extends Component {
         render() {
+            console.log(this.props.auth);
             switch (this.props.auth) {
                 case false:
                     return <Redirect to="/forbidden" />
