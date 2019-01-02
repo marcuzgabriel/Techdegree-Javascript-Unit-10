@@ -12,7 +12,7 @@ import { logoutUser } from '../../actions';
 // Import styles
 import {
     Error
-} from '../subpages/Signup/styles';
+} from '../subpages/UserSignUp/styles';
 
 class Header extends Component {
     constructor(props) {

@@ -8,11 +8,10 @@ import { connect } from 'react-redux';
 
 import {
     ErrorContainer,
-    ErrorMessage,
     InputField,
     Error,
     Success
-} from '../Signup/styles';
+} from '../UserSignUp/styles';
 
 class UserSignInForm extends Component {
     constructor(props) {

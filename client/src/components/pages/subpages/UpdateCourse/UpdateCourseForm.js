@@ -15,7 +15,7 @@ import {
     TextArea,
     Error,
     Success
-} from '../Signup/styles';
+} from '../UserSignUp/styles';
 import { connect } from 'react-redux';
 
 class UpdateCourseForm extends Component {

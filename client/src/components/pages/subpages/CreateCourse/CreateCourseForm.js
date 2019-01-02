@@ -13,7 +13,7 @@ import {
     TextArea,
     Error,
     Success
-} from '../Signup/styles';
+} from '../UserSignUp/styles';
 
 
 class CreateCourseForm extends Component {

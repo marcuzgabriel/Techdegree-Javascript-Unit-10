@@ -8,7 +8,7 @@ import {
 
 import {
     Error
-} from '../Signup/styles';
+} from '../UserSignUp/styles';
 
 class CourseDetail extends Component {
     constructor(props) {
