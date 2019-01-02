@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { loginUser } from '../../../actions';
+import { userLogin } from '../../../actions';
 import { connect } from 'react-redux';
 
 // import components
-import SigninForm from './SigninForm';
+import UserSignInForm from './UserSignInForm';
 
-class Signin extends Component {
+class UserSignIn extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
@@ -19,8 +19,8 @@ class Signin extends Component {
                     <div className="grid-33 centered signin">
                     <h1>Sign In</h1>
                     <div>
-                        <SigninForm 
-                            loginUserReducer={this.props.loginUser} // Signin user reducer
+                        <UserSignInForm
+                            loginUserReducer={this.props.userLogin} // Signin user reducer
                             loginUserState={this.props.login} // Check the user state
                             getUserAuth={this.props.userAuth}
                             auth={this.props.auth}
@@ -28,7 +28,7 @@ class Signin extends Component {
                     </div>
                     <p>&nbsp;</p>
                     <p>Don't have a user account?
-                         <Link to="/sign-up"> Click here</Link> to sign up!
+                         <Link to="/signup"> Click here</Link> to sign up!
                     </p>
                     </div>
                 </div>
@@ -47,5 +47,5 @@ function mapStateToProps({auth, logout, login}) {
 }
 
 export default {
-    component: connect(mapStateToProps, { loginUser })(Signin)
+    component: connect(mapStateToProps, { userLogin })(UserSignIn)
 }

@@ -9,7 +9,6 @@ import { Loader } from '../../../../../public/css/Global';
 // Local styles
 import {
     ErrorContainer,
-    ErrorMessage,
     InputField,
     TextArea,
     Error,
@@ -21,6 +20,8 @@ class CreateCourseForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
+            // Static states for data handling
             isLoading: false,
             isError: false,
             isSuccess: false,
@@ -28,6 +29,7 @@ class CreateCourseForm extends Component {
         }
     }
 
+    // A redux-form approach which is neccesary
     renderFields({ input, meta: { touched, error }, ...otherProps}) {
         const hasError = touched && error !== undefined;
 
@@ -81,10 +83,11 @@ class CreateCourseForm extends Component {
         )
     }
 
-    
-    submitForm = async ( props ) => {
+    // Submit the form and run the action
+    submitForm(props){
+        
         const { createCourseReducer } = this.props;
-        await createCourseReducer(props);
+        createCourseReducer(props);
 
         // Start the loader
         this.setState({
@@ -92,62 +95,63 @@ class CreateCourseForm extends Component {
         });
     }
 
-    /////////////////////////
-    // COMPONENT LIFECYCLE //
-    /////////////////////////
+    // Reset states - used for request handling
+    resetStates() {
+        this.setState({
+            isLoading: false,
+            isError: false,
+            isSuccess: false,
+            statusMsg: ""
+        });
+    }
 
-    componentDidUpdate(prevProps, prevState) {
-        
-        /* Handle result 
-        Check if there is a create user state. If there is and it the status code is 
-        anything but 200 then throw the error message else empty the states for success.
-        */
-        
-        const { createCourseState } = this.props;
-
-        /* If isLoading is true and the createCourseState is not null state 
-        then the user has pressed the submit button */
-        if (createCourseState && this.state.isLoading) {
-
-            if (createCourseState.status !== 201) {
-                    this.setState({
-                    isLoading: false,
-                    isError: true,
-                    isSuccess: false,
-                    statusMsg: createCourseState.message
-                });
-
-                /* Reset the states after 2 sec else it will not show any other errors */
-                setTimeout(() => {
-                    this.setState({
-                        isError: false,
-                        statusMsg: ""
-                    });
-                }, 2000);
-            } else {
+    // Handle the data
+    handleRequest(req) {
+        switch(req.data.status) {
+            case (201): // Success 
                 this.setState({
                     isLoading: false,
                     isError: false,
                     isSuccess: true,
-                    statusMsg: createCourseState.message
-                });        
-
-                this.props.reset();               
-
-                /* As you dont do any redirection then it is important that you reset
-                that states after the success message has shown. Otherwise isSuccess state
-                will remain true and no new success messages will be shown */
+                    statusMsg: req.data.message
+                });
+                setTimeout(() => {
+                    this.resetStates();
+                    this.props.history.push("/");
+                }, 2000);
+            break;
+            case (205): // Loading
+            break;
+            case (404): // We have an error
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                    isSuccess: false,
+                    statusMsg: req.data.message
+                });
 
                 setTimeout(() => {
-                    this.setState({
-                        isSuccess: false
-                    });
-
-                    this.props.history.push("/"); // Push the user to the main page
-
+                    this.resetStates(); // You need to reset the states 
                 }, 2000);
-            }
+            break;
+            case (500): // We have an internal error
+                this.props.history.push("/error");
+            break;
+            default: // If we have any other error which is not defined
+                this.props.history.push("/error");
         }
+    }
+
+    /////////////////////////
+    // COMPONENT LIFECYCLE //
+    /////////////////////////
+
+    // Ensures that data is handled everytime the component updates
+    componentDidUpdate(prevProps, prevState) {
+        const { createCourseState } = this.props;
+        if (createCourseState && this.state.isLoading) {
+            this.handleRequest(createCourseState);
+        } 
     }
 
 
@@ -155,6 +159,7 @@ class CreateCourseForm extends Component {
         
         /* It is commonly good practice to set a loader before the prop you use to ensure
         that they render before they are being called */
+
         const { auth } = this.props;
         if (!auth) {
             return <div><Loader>Loading...</Loader></div>
@@ -202,6 +207,7 @@ class CreateCourseForm extends Component {
     }
 }
 
+// Validation - a redux-form approach
 const validate = values => {
     const errors = {}
 

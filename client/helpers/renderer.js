@@ -3,18 +3,16 @@ import { renderToString } from "react-dom/server";
 import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { renderRoutes } from "react-router-config";
-//serialize is used to prevent xss attacks
-import serialize from "serialize-javascript";
+import serialize from "serialize-javascript"; // Serialize is used to prevent xss attacks
 import { Helmet } from "react-helmet";
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 import Routes from '../src/Routes';
 
-/**
- * Denne funktion renderer det content vi vil have vist på skræmen først. 
- * Det der sker, er at data storen bliver loadet, og smidt med som content.
- * Herefter omformateres det til en string af html og sendes med i det html dokument der bliver sendt tilbage til brugeren først.
- * først herefter loades bundle.js filen, som er alt det react, vi gerne vil have på siden.
- */
+/* Readme
+This function renders the content we want to show on the screen first. 
+The data gets stored and loaded and thrown into the HTML with content. 
+When this has happend that it creates a string of HTML. First when everything
+is in HTML format, then will the bundle.js file be loadet. */
 
 export default (req, store, context) => {
     const sheet = new ServerStyleSheet()
@@ -26,9 +24,14 @@ export default (req, store, context) => {
         </Provider>
     );
 
+    /* This plugin renders all the styled-components which is great for a bigger development team.
+    A styled component can be used to style a single component as you like. In this app I have used
+    both styled components and a style.css public file */
     const style = sheet.getStyleTags()
 
-    //This instance returns an object of all the metatags we have loaded up to the Helmet lib.
+    /* This instance returns an object of all the metatags we have loaded up to the Helmet lib. 
+    Havent used metatags in the app yet. But it is good for SEO optimization later on. Just search
+    for the helmet plugin to see how it works. */
     const helmet = Helmet.renderStatic();
 
     return `

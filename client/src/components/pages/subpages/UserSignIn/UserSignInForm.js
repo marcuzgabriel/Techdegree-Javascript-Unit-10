@@ -14,10 +14,12 @@ import {
     Success
 } from '../Signup/styles';
 
-class SigninForm extends Component {
+class UserSignInForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
+            // Static states when handling data
             isLoading: false,
             isError: false,
             isSuccess: false,
@@ -25,6 +27,7 @@ class SigninForm extends Component {
         }
     }
 
+    // RenderFields is a redux-form appraoach which is neccesary.
     renderFields({ input, meta: { touched, error }, ...otherProps}) {
         const hasError = touched && error !== undefined;
 
@@ -62,14 +65,12 @@ class SigninForm extends Component {
         )
     }
 
-    
-    submitForm ( props ) {
-        /* In order to get a natural flow you need to use the async. When using the async
-        then we wait for the signinReducer to be finished before we initialize the get Auth.
-        This ensures that when we call upon the get auth prop, then its rendered correctly. */
+    // Submit form and run the reducer    
+    submitForm (props) {
 
         const {  loginUserReducer } = this.props;
-        loginUserReducer(props); // A reducer that calls the API and checks if there is a user
+        loginUserReducer(props);
+        //loginUserReducer.login(props); // A reducer that calls the API and checks if there is a user
 
         // Start the loader
         this.setState({
@@ -77,6 +78,7 @@ class SigninForm extends Component {
         });
     }
 
+    // Reset states is used for the handlerequest
     resetStates() {
         this.setState({
             isLoading: false,
@@ -86,6 +88,7 @@ class SigninForm extends Component {
         });
     }
 
+    // This function handles the data correctly
     handleRequest(req) {
         switch(req.data.status) {
             case (200): // Success 
@@ -101,7 +104,6 @@ class SigninForm extends Component {
                 }, 2000);
             break;
             case (205): // Loading
-                console.log("Loading...");
             break;
             case (404): // We have an error
                 this.setState({
@@ -126,6 +128,8 @@ class SigninForm extends Component {
     /////////////////////////
     // COMPONENT LIFECYCLE //
     /////////////////////////
+
+    // This ensures correct datahandling everytime data is updated
     componentDidUpdate(prevProps, prevState) {
         
         const { loginUserState } = this.props;
@@ -154,6 +158,7 @@ class SigninForm extends Component {
     }
 }
 
+// Redux form validation
 const validate = values => {
     const errors = {}
 
@@ -182,6 +187,6 @@ const validate = values => {
 }
 
 export default reduxForm({
-    form: 'signinUserForm',
+    form: 'UserSignInForm',
     validate
-})(withRouter(SigninForm));
+})(withRouter(UserSignInForm));

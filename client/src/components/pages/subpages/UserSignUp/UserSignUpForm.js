@@ -14,10 +14,12 @@ import {
 import { createUser } from '../../../actions';
 import { create } from 'domain';
 
-class CreateUserForm extends Component {
+class UserSignUpForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
+            // Static states used for handling data
             isLoading: false,
             isError: false,
             isSuccess: false,
@@ -25,6 +27,7 @@ class CreateUserForm extends Component {
         }
     }
 
+    // RenderFields is a redux form approach, which is neccesary
     renderFields({ input, meta: { touched, error }, ...otherProps}) {
         const hasError = touched && error !== undefined;
 
@@ -87,11 +90,11 @@ class CreateUserForm extends Component {
 
     }    
 
-    submitForm = async ( props ) => {
+    // Submit form and run the action
+    submitForm(props) {
 
-        const { createUserReducer, getUserAuth } = this.props;
-        await createUserReducer(props);
-        await getUserAuth(); // If there is a user then can get the auth property. 
+        const { createUserReducer } = this.props;
+        createUserReducer(props);
 
         // Start the loader
         this.setState({
@@ -99,48 +102,63 @@ class CreateUserForm extends Component {
         });
     }
 
-    /////////////////////////
-    // COMPONENT LIFECYCLE //
-    /////////////////////////
+    // Reset data is used with the handleRequest
+    resetStates() {
+        this.setState({
+            isLoading: false,
+            isError: false,
+            isSuccess: false,
+            statusMsg: ""
+        });
+    }
 
-    componentDidUpdate(prevProps, prevState) {
-        
-        /* Handle result 
-        Check if there is a create user state. If there is and it the status code is 
-        anything but 200 then throw the error message else empty the states for success.
-        */
-        
-        const { createUserState } = this.props;
-
-        /* If isLoading is true and the createUserState is not null state 
-        then the user has pressed the submit button */
-        if (createUserState && this.state.isLoading) {
-
-            if (createUserState.status !== 201) {
-                    this.setState({
-                    isLoading: false,
-                    isError: true,
-                    isSuccess: false,
-                    statusMsg: createUserState.message
-                });
-
-                /* Reset the states after 2 sec else it will not show any other errors */
-
-                setTimeout(() => {
-                    this.setState({
-                        isError: false,
-                        statusMsg: ""
-                    });
-                }, 2000);
-
-            } else {
+    // Handle data function
+    handleRequest(req) {
+        switch(req.data.status) {
+            case (201): // Success 
                 this.setState({
                     isLoading: false,
                     isError: false,
                     isSuccess: true,
-                    statusMsg: createUserState.data.message
-                });        
-            }
+                    statusMsg: req.data.message
+                });
+                setTimeout(() => {
+                    this.resetStates();
+                    this.props.history.push("/");
+                }, 2000);
+            break;
+            case (205): // Loading
+            break;
+            case (404): // We have an error
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                    isSuccess: false,
+                    statusMsg: req.data.message
+                });
+
+                setTimeout(() => {
+                    this.resetStates(); // You need to reset the states 
+                }, 2000);
+            break;
+            case (500): // We have an internal error
+                this.props.history.push("/error");
+            break;
+            default: // If we have any other error which is not defined
+                this.props.history.push("/error");
+        }
+    }
+
+    /////////////////////////
+    // COMPONENT LIFECYCLE //
+    /////////////////////////
+
+    // This ensures that everytime data is updated, then the handle data function runs
+    componentDidUpdate(prevProps, prevState) {
+        
+        const { createUserState } = this.props;
+        if (createUserState && this.state.isLoading) {
+            this.handleRequest(createUserState);
         }
     }
 
@@ -168,7 +186,7 @@ class CreateUserForm extends Component {
     }
 }
 
-
+// Redux form validation
 const validate = values => {
     const errors = {}    
 
@@ -223,6 +241,6 @@ const validate = values => {
 }
 
 export default reduxForm({
-    form: 'createUserForm',
+    form: 'UserSignUpForm',
     validate
-})(withRouter(CreateUserForm));
+})(withRouter(UserSignUpForm));

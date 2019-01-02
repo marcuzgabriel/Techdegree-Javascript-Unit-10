@@ -16,18 +16,19 @@ class Main extends Component {
         }
     }
 
+    // Get courses and get the auth
     renderReducers() {
         const { getCourses, userAuth } = this.props;
         getCourses();
         userAuth();
     }
 
+    // Ensures that the data is loading upon start
     componentDidMount() {
         this.renderReducers();
     }
 
     render() { 
-        
         return (
             <div>
                 <Wrapper>

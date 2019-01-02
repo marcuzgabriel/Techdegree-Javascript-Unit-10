@@ -8,6 +8,7 @@ import CreateCourseReducer from "./CreateCourseReducer";
 import GetCoursesReducer from "./GetCoursesReducer";
 import GetSingleCourseReducer from "./GetSingleCourseReducer";
 import DeleteCourseReducer from "./DeleteCourseReducer";
+import UpdateCourseReducer from "./UpdateCourseReducer";
 
 export default combineReducers({
     form: formReducer,
@@ -16,6 +17,7 @@ export default combineReducers({
     login: LoginUserReducer,
     auth: AuthUserReducer,
     create_course: CreateCourseReducer,
+    update_course: UpdateCourseReducer,
     courses: GetCoursesReducer,
     single_course: GetSingleCourseReducer,
     delete_course: DeleteCourseReducer

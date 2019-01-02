@@ -1,7 +1,15 @@
+/* Readme
+Passsport is 'case sensitive'. It only accept parameters "username", "password".
+If you use other parameters then you have to define them yourself, which
+is rather straight forward. The purpose of passport is to store the users information 
+in a cookie when logging in. The cookie then remembers the req.locals.user variable,
+which contains the users information. If the variable is not defined then it will 
+return null. In this way the server knows wether the user is authenticated
+or not. If changes in the file then you have to loggin again. */
+
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const Users = require('../models/models').Users;
-
 
 // Passport signup
 passport.use('local-signup', new LocalStrategy({
@@ -35,13 +43,7 @@ passport.use('local-login', new LocalStrategy({
         usernameField : 'data[email]',
         passwordField : 'data[password]'
     },
-    /* Passsport is 'case sensitive'. It only accept parameters "username", "password".
-    If you use other parameters then you have to define them yourself, which
-    is rather straight forward. The purpose of passport is to store the users information 
-    in a cookie when logging in. The cookie then remembers the req.locals.user variable,
-    which contains the users information. If the variable is not defined then it will 
-    return null. In this way the server knows wether the user is authenticated
-    or not. If changes in the file then you have to loggin again. */
+   
     (email, password, done) => {
   
     Users.getUserByUsername(email, (err, user) => {
@@ -80,7 +82,6 @@ passport.use('local-login', new LocalStrategy({
         "firstName": user.firstName,
         "lastName": user.lastName,
         "emailAddress": user.emailAddress,
-        "token": 123,
         "authenticated": true
       }
       done(err, currentUser);

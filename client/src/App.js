@@ -1,10 +1,7 @@
 import React from 'react';
 import { renderRoutes } from "react-router-config";
 import styled from 'styled-components';
-import {ThemeProvider} from 'styled-components';
 import {Switch} from "react-router-dom";
-import { connect } from 'react-redux';
-import { logoutUser } from './components/actions';
 import Header from './components/pages/header/Header';
 
 const PageWrap = styled.div`

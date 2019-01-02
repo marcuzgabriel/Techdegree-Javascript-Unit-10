@@ -7,18 +7,14 @@ import {
 } from "../../../../../public/css/Global";
 
 import {
-    ErrorContainer,
-    ErrorMessage,
-    InputField,
-    TextArea,
-    Error,
-    Success
+    Error
 } from '../Signup/styles';
 
-class ShowCourse extends Component {
+class CourseDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
             hasError: false,
             isLoading: false,
             isError: false,
@@ -45,7 +41,7 @@ class ShowCourse extends Component {
         e.preventDefault();
         const { single_course, deleteCourseById } = this.props;
         if (single_course) {
-            await deleteCourseById(single_course._id);
+            deleteCourseById(single_course._id);
 
             // Start the loader
             this.setState({
@@ -53,6 +49,54 @@ class ShowCourse extends Component {
             });
         }
     }
+
+    // User for handleRequest
+    resetStates() {
+        this.setState({
+            isLoading: false,
+            isError: false,
+            isSuccess: false,
+            statusMsg: ""
+        });
+    }
+
+    // Handle the data
+    handleRequest(req) {
+        switch(req.status) {
+            case (200): // Success 
+                this.setState({
+                    isLoading: false,
+                    isError: false,
+                    isSuccess: true,
+                    statusMsg: req.message
+                });
+                setTimeout(() => {
+                    this.resetStates();
+                    this.props.history.push("/");
+                }, 2000);
+            break;
+            case (205): // Loading
+            break;
+            case (404): // We have an error
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                    isSuccess: false,
+                    statusMsg: req.message
+                });
+
+                setTimeout(() => {
+                    this.props.history.push("/notfound");
+                }, 2000);
+            break;
+            case (500): // We have an internal error
+                this.props.history.push("/error");
+            break;
+            default: // If we have any other error which is not defined
+                this.props.history.push("/error");
+        }
+    }
+
 
     /////////////////////////
     // COMPONENT LIFECYCLE //
@@ -64,97 +108,85 @@ class ShowCourse extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-
-        const {delete_course} = this.props;
+        
+        // Ensures that the handle data request always is running
+        const { delete_course } = this.props;
         if (delete_course && this.state.isLoading) {
-            if (delete_course.status !== 204) {
-                this.setState({
-                    isLoading: false,
-                    isError: true,
-                    isSuccess: false,
-                    statusMsg: delete_course.message
-                });
-
-                /* Reset the states after 2 sec else it will not show any other errors */
-                setTimeout(() => {
-                    this.setState({
-                        isError: false,
-                        statusMsg: ""
-                    });
-                }, 2000);
-            } else {
-                this.setState({
-                    isLoading: false,
-                    isError: false,
-                    isSuccess: true,
-                    statusMsg: delete_course.message
-                });        
-
-                /* As you dont do any redirection then it is important that you reset
-                that states after the success message has shown. Otherwise isSuccess state
-                will remain true and no new success messages will be shown */
-
-                setTimeout(() => {
-                    this.setState({
-                        isSuccess: false
-                    });
-
-                    this.props.history.push("/"); // Redirect the user to the main page
-
-                }, 2000);
-            }
+            this.handleRequest(delete_course);
         }
     }
 
     render() { 
     
-        const { single_course, auth, deleteCourseById, delete_course } = this.props;
+        const { single_course, auth } = this.props;
 
-        // If its not yet true start a loader
+        // If its not true, start the loader
         if (!single_course) {
             return <div className="loaderDiv"><p>Loading...</p><Loader/></div>
         } 
 
-        // If there is any errors
-        if (single_course.status === 404 || single_course.status === 409) {
-            return <Redirect to="/not-found" />
+        // If no courses can be found redirect
+        if (single_course.status === 404) {
+           return <Redirect to="/notfound"></Redirect>
         }
-
+    
         ///////////////////////////////////////////
         // SHOWS THE MATERIALS NEEDED IN AN LIST //
         ///////////////////////////////////////////
+
+        /* I could use the plugin Teamtreehouse has recommended, but I decided 
+        to make my own javascript manipulation */
 
         function Item(props) {
             return <li>{props.description}</li>;
         }
 
+        
         function TodoList() {
-            let str = single_course.materialsNeeded;
-            str = str.split('\n');
-            return (
-              <ul>
-                {str.map((desc, index) => <Item key={index} description={desc} />)}
-              </ul>
-            );
+
+            // If its true then we want to show the materials if not then show a message that says "No materials needed"
+            if (single_course.materialsNeeded) {
+                let str = single_course.materialsNeeded;
+                str = str.split('\n');
+                return (
+                <ul>
+                    {str.map((desc, index) => <Item key={index} description={desc} />)}
+                </ul>
+                );
+            } else {
+                return (
+                    <ul>
+                        <Item description={"No materials needed"} />
+                    </ul>
+                )
+            }
         }
 
-        ///////////////////////////////////
-        // CHECK IF ITS THE USERS COURSE //
-        ///////////////////////////////////
+        ////////////////////////////////////
+        // CHECKS IF ITS THE USERS COURSE //
+        ////////////////////////////////////
 
+        // This function creates the header possibility for the user to either delete or update a course created by that user.
         function checkUserCourse(a, c, deleteCourse) {
             
+            // A stands for auth
+            // C stands for course
+
+            // If there is no auth we want to return nothing
             if (!a) {
                 return <span></span>
+            
+            // If there is an auth then we want to compare it with the course creator and give the user the possibility to udpate or delete the course
             } else if (a.emailAddress === c.user.emailAddress) {
 
                 return (
                     <span>
-                        <a className="button" href="update-course.html">Update Course</a>
+                        <Link className="button" to={`/courses/${c._id}/update`}>Update Course</Link>
                         <a className="button" onClick={deleteCourse.bind(this)}>Delete Course</a>
                     </span>
                 );
             } else {
+                // If there is a user but the user do not own that course, then we want to show nothing.
                 return <span></span>
             }          
         }
@@ -202,11 +234,11 @@ class ShowCourse extends Component {
     }
 } 
 
-// Makes sure that we can get the auth as a prop
+// Get different props from the reducer
 function mapStateToProps({auth, single_course, delete_course}) {
     return {auth, single_course, delete_course};
 }
  
 export default {
-    component: connect(mapStateToProps, { getCourseById, userAuth, deleteCourseById })(ShowCourse)
+    component: connect(mapStateToProps, { getCourseById, userAuth, deleteCourseById })(CourseDetail)
 }

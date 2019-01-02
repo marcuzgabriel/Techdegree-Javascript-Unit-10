@@ -1,14 +1,14 @@
-import { 
-    USERTYPE
-} from "../actions/types";
+import {
+    COURSETYPE
+} from '../actions/types';
 
 export default function(state = null, action) {
     switch (action.type) {
-        case USERTYPE.LOGOUT_REQUEST:
+        case COURSETYPE.UPDATE_COURSE_REQUEST:
             return action.payload;
-        case USERTYPE.LOGOUT_SUCCESS:
+        case COURSETYPE.UPDATE_COURSE_SUCCESS:
             return action.payload;
-        case USERTYPE.LOGOUT_FAILURE:
+        case COURSETYPE.UPDATE_COURSE_FAILURE:
             return action.payload;
         default:
             return state;

@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import { createUser, userAuth } from '../../../actions';
  
 // Import components 
-import CreateUserForm from './CreateUser';
+import UserSignUpForm from './UserSignUpForm';
 
-class Signup extends Component {
+class UserSignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
@@ -21,7 +21,7 @@ class Signup extends Component {
                     <div className="grid-33 centered signin">
                     <h1>Sign Up</h1>
                     <div>
-                        <CreateUserForm 
+                        <UserSignUpForm
                             createUserReducer={this.props.createUser} // create user reducer
                             createUserState={this.props.create_user} // create user state (check status)
                             getUserAuth={this.props.userAuth}
@@ -30,7 +30,7 @@ class Signup extends Component {
                     </div>
                     <p>&nbsp;</p>
                     <p>Already have a user account?
-                        <Link to="/sign-in"> Click here</Link> to sign in!
+                        <Link to="/signin"> Click here</Link> to sign in!
                     </p>
                     </div>
                 </div>
@@ -44,6 +44,6 @@ function mapStateToProps({auth, form, create_user}) {
 }
  
 export default {
-    component: connect(mapStateToProps, {createUser, userAuth})(Signup)
+    component: connect(mapStateToProps, {createUser, userAuth})(UserSignUp)
 }
     

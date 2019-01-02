@@ -1,12 +1,13 @@
+/* This is the first component that will render in this app */
+
 import React, { Component } from 'react' // In order to
 import { connect } from "react-redux"; // Connect to states - a react redux method
 import { Wrapper } from '../../../../public/css/Global';
 import { getCourses, userAuth } from "../../actions";
-import privateRoute from "../../hocs/privateRoute";
+
 // Components
 import MainContent from '../subpages/Maincontent/MainContent';
-// Import components
-import { Loader } from '../../../../public/css/Global';
+// Import component
 
 class Main extends Component {
     constructor(props) {
@@ -21,7 +22,6 @@ class Main extends Component {
         const { getCourses, userAuth } = this.props;
         userAuth();
         getCourses();
-      
     }
 
     componentDidMount() {

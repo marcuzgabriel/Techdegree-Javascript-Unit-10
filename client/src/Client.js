@@ -9,10 +9,12 @@ import axios from 'axios';
 import Routes from './Routes';
 import reducers from './components/reducers';
 
+// Makes an api instance, which is used in our actions
 const axiosInstance = axios.create({
     baseURL: '/api'
 });
 
+// Makes a connection to all of reducers
 const store = createStore(
     reducers, 
     window.INITIAL_STATE, 

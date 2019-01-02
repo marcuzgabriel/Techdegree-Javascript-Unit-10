@@ -3,6 +3,7 @@ import thunk  from "redux-thunk";
 import axios from "axios";
 import reducers from "../src/components/reducers";
 
+// This create store makes an axios instance to our API. 
 export default (req) => {
  
     const axiosInstance = axios.create({

@@ -64,7 +64,7 @@ userRoute.get("/", (req, res, next) => {
 
 // POST route - create user
 userRoute.post("/", (req, res, next) => {
- 
+
   // Check if email is taken through a static mongoose method
   passport.authenticate('local-signup', (err, user, info) => {
     if (err) { return next(err); }

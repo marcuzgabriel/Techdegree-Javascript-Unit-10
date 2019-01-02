@@ -92,13 +92,13 @@ courseRoute.put("/:cID",(req, res, next) => {
         
             // Run static method
             Courses.findCourseById(req.course._id, (err, course) => {
-                
                 if (err) return next(err);
-                course.update(req.body, (err, course) => {
+                course.update(req.body.data, (err, course) => {
                     if (err) return next(err);
-                    res.status(204);
-                    res.location("/");
-                    res.json(course);
+                    res.status(200).json({
+                        status: 200,
+                        message: "Course updated."
+                    });
                 });
             });
         } else {
@@ -132,7 +132,10 @@ courseRoute.delete("/:cID",(req, res, next) => {
                 if (err) return next(err);
                 course.delete(req.body, (err, course) => {
                     if (err) return next(err);
-                    res.status(204).end();
+                    res.status(200).json({
+                        status: 200,
+                        message: "Course deleted."
+                    });
                 });
             });
         } else {

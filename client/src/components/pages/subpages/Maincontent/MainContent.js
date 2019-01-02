@@ -1,3 +1,7 @@
+/* Readme
+This component is directly connected to the main app. The function of this component
+is to show the courses if there is any */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
