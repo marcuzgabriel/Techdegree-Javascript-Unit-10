@@ -14,8 +14,9 @@ module.exports = {
                 options: {
                     plugins: ['transform-class-properties'],
                     presets: [
-                        "@babel/preset-env",
-                        "@babel/preset-react"
+                        "@babel/preset-react",
+                        ["@babel/preset-env", {targets: {browsers: ['last 2 versions']}}]
+                        
                     ]
                 }
             },

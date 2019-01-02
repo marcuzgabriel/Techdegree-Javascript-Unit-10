@@ -3,7 +3,7 @@ import { reducer as formReducer } from 'redux-form'
 import CreateUserReducer from './CreateUserReducer';
 import AuthUserReducer from './AuthUserReducer';
 import LogoutUserReducer from "./LogoutUserReducer";
-import SigninUserReducer from "./SigninUserReducer";
+import LoginUserReducer from "./LoginUserReducer";
 import CreateCourseReducer from "./CreateCourseReducer";
 import GetCoursesReducer from "./GetCoursesReducer";
 import GetSingleCourseReducer from "./GetSingleCourseReducer";
@@ -13,7 +13,7 @@ export default combineReducers({
     form: formReducer,
     create_user: CreateUserReducer,
     logout: LogoutUserReducer,
-    signin: SigninUserReducer,
+    login: LoginUserReducer,
     auth: AuthUserReducer,
     create_course: CreateCourseReducer,
     courses: GetCoursesReducer,

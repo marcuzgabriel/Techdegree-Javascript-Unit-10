@@ -4,8 +4,12 @@ import proxy from "express-http-proxy";
 import Routes from "./src/Routes";
 import renderer from "./helpers/renderer";
 import createStore from "./helpers/createStore";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
+// app.use(cors());
+app.use(cookieParser());
 
 ///////////////////////////////
 // CREATE A PROXY TO THE API //
@@ -25,23 +29,6 @@ app.use('/api',
 // Make a static connection to the public 
 
 app.use(express.static('public'));
-
-// //CORS handler. pr. default CORS error will take action and deny any api calls. This handles CORS
-// app.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     res.header("Cache-control", "no-cache=set-cookie");
-
-//     const getCookie = req.get('cookie');
-
-//     if (getCookie) {
-//         res.header("set-cookie", getCookie);
-//     }
-
-
-//     next();
-//  });
 
 /* How to setup your server routing with the React routing. 
 React uses paths and its own routing interigation. That is why we want to create an asynchronous connection between 

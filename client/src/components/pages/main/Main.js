@@ -16,11 +16,12 @@ class Main extends Component {
            
         }
     }
-
+    
     renderReducers() {
         const { getCourses, userAuth } = this.props;
-        getCourses();
         userAuth();
+        getCourses();
+      
     }
 
     componentDidMount() {
@@ -28,6 +29,7 @@ class Main extends Component {
     }
 
     render() { 
+
         return (
             <div>
                 <Wrapper>

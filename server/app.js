@@ -1,25 +1,18 @@
 'use strict';
 
 // load modules
-const cookieSession = require('cookie-session');
+var uuid = require('node-uuid'); // Creates unique ID's
 const express = require('express'); // Server
 const morgan = require('morgan'); // Error handling
 const userRoute = require('./src/routes/userRoute'); // Loading routes
 const courseRoute = require('./src/routes/courseRoute'); // Course routes
 var bodyParser = require('body-parser'); // Body parser
 const mongoose = require("mongoose"); // Database
-const path = require("path") // Enable joined paths
 const cookieParser = require("cookie-parser") // Read cookies and create them
-const exphbs = require("express-handlebars"); // Dunnoe if its neccesary yet....
-const flash = require("connect-flash"); // Something used for storing messages...
 const session = require("express-session"); // Session handleing
 const passport = require("passport"); // Auth handling
-const LocalStrategy = require("passport-local").Strategy;
-const cors = require('cors');
-require("@babel/polyfill");
-require('dotenv').config();
+require('dotenv').config(); // Local environment variables
  
-
 // Configure mongoose
 mongoose.connect("mongodb://localhost:27017/td10-restapi");
 const db = mongoose.connection;
@@ -39,35 +32,45 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 
 // Create the Express app
 const app = express();
-app.use(cors());
+
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false })) // Parse application/x-www-form-urlencoded
 app.use(bodyParser.json()) // Parse application/json
-
-if (process.env.NODE_ENV === 'production') {
-  app.get('*.js', function (req, res, next) {
-      req.url = req.url + '.gz';
-      res.set('Content-Encoding', 'gzip');
-      next();
-  });
-}
 
 // Setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
-// Sessions
-app.use(
-  cookieSession({
-      name: 'td10-login',
-      maxAge: 30*24*60*60*1000, 
-      keys: [process.env.cookieKey],
-  })
-)
+/* This CORS configuration is without a doubt the most essential part of the entire app for cross-browser consitency.
+IE11 is the most difficult browser to synchronise with React codes - you have to use countless hours and babel plugins
+to make your react app compatiable with IE11. In this app the plugin passport is used for every login and user creation.
+This plugin is one of the most used and most popular plugins for user authentication among developers in real life projects.
+Passport creates an auth cookie which works perfectly in all browers, except IE11. There is no info online to be found on this 
+particular issue, other than including the right @babel plugins at the right places in the app. If you use passport as I do,
+then your app will by default not work in IE11 when it comes to the login and user creation. After many days of testing I 
+finally managed to find the correct header configuration for IE11 and all other browsers with React, which makes it possible 
+to send cookies and use them both on the server and on the client side. Furthermore, IE11 blocks all cookies using cache,
+which the Allow-Credentials: true, Cache-control: no-cache=set-cookie prevents. These two header configurations was the
+ultimate solution for the biggest problem in this app. */
 
-// app.use(session({
-//   secret: process.env.SECRET,
-//   saveUninitialized: false,
-//   resave: false
-// }));
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Cache-control', 'no-cache=set-cookie');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+});
+
+app.use(session({
+  genid: function(req) {
+    return uuid.v4(); // use UUIDs for session IDs
+  },
+  secret: process.env.cookieKey,
+  secure: false,
+  httpOnly: true,
+  saveUninitialized: false,
+  resave: false
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -88,15 +91,6 @@ app.get('/', (req, res) => {
     message: 'Welcome to the JavaScript techdegree unit 10 REST-API'
   });
 });
-
-// This is the function you can use in a cross api
-function ensureAuthentication(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    res.redirect('/api/users/login');
-  }
-}
 
 // send 404 if no other route matched
 app.use((req, res) => {

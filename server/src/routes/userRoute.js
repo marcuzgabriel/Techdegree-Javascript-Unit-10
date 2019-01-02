@@ -91,8 +91,7 @@ userRoute.post("/", (req, res, next) => {
 // Logout and delete cookies
 userRoute.get('/logout', (req, res, next) => {
   req.logout();
-  res.clearCookie('td10-login');
-  req.session = null;
+  res.clearCookie('connect.sid');
   res.status(201).json({
     status: 201,
     message: "Bye bye... Logging you out!"

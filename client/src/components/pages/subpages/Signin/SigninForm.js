@@ -68,9 +68,8 @@ class SigninForm extends Component {
         then we wait for the signinReducer to be finished before we initialize the get Auth.
         This ensures that when we call upon the get auth prop, then its rendered correctly. */
 
-        const { signinUserReducer, getUserAuth } = this.props;
-        signinUserReducer(props); // A reducer that calls the API and checks if there is a user
-        // getUserAuth();
+        const {  loginUserReducer } = this.props;
+        loginUserReducer(props); // A reducer that calls the API and checks if there is a user
 
         // Start the loader
         this.setState({
@@ -78,64 +77,60 @@ class SigninForm extends Component {
         });
     }
 
-    /////////////////////////
-    // COMPONENT LIFECYCLE //
-    /////////////////////////
+    resetStates() {
+        this.setState({
+            isLoading: false,
+            isError: false,
+            isSuccess: false,
+            statusMsg: ""
+        });
+    }
 
-
-
-    componentDidUpdate(prevProps, prevState) {
-        
-        /* Handle result 
-        Check if there is a create user state. If there is and it the status code is 
-        anything but 200 then throw the error message else empty the states for success.
-        If there is an error then we change the isError state to true and set it back
-        to false after 2 seconds with a setTimeout window function. 
-        */
-        
-        const { signinUserState } = this.props;
-
-        /* If isLoading is true and the createUserState is not null state 
-        then the user has pressed the submit button */
-        if (signinUserState && this.state.isLoading) {
-
-            if (signinUserState.status !== 200) {
-                this.setState({
-                    isLoading: false,
-                    isError: true,
-                    isSuccess: false,
-                    statusMsg: signinUserState.message
-                });
-
-                /* Reset the states after 2 sec else it will not show any other errors
-                as the isError state is set to true. It should be mentioned 
-                that using setTimeout functions when rendering data is not recommended, but
-                if we are here in the codes, then everything should be rendered and uploadet
-                correctly. In this example the setTimeout function do not handle or interrupt
-                any data sent or recieved from the database - it just handles the state. */
-                
-                setTimeout(() => {
-                    this.setState({
-                        isError: false,
-                        statusMsg: ""
-                    });
-                }, 2000);
-
-            } else {
-
+    handleRequest(req) {
+        switch(req.data.status) {
+            case (200): // Success 
                 this.setState({
                     isLoading: false,
                     isError: false,
                     isSuccess: true,
-                    statusMsg: signinUserState.data.message
-                });       
+                    statusMsg: req.data.message
+                });
+                setTimeout(() => {
+                    this.resetStates();
+                    this.props.history.push("/");
+                }, 2000);
+            break;
+            case (205): // Loading
+                console.log("Loading...");
+            break;
+            case (404): // We have an error
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                    isSuccess: false,
+                    statusMsg: req.data.message
+                });
 
-                const { auth } = this.props;
-                if (auth) {
-                   console.log("Auth Here", auth)
-                }
+                setTimeout(() => {
+                    this.resetStates(); // You need to reset the states 
+                }, 2000);
+            break;
+            case (500): // We have an internal error
+                this.props.history.push("/error");
+            break;
+            default: // If we have any other error which is not defined
+                this.props.history.push("/error");
+        }
+    }
 
-            }
+    /////////////////////////
+    // COMPONENT LIFECYCLE //
+    /////////////////////////
+    componentDidUpdate(prevProps, prevState) {
+        
+        const { loginUserState } = this.props;
+        if (loginUserState && this.state.isLoading) {
+            this.handleRequest(loginUserState);
         }
     }
 

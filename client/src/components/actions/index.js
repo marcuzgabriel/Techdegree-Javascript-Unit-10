@@ -12,7 +12,9 @@ import {
     AUTH_USER,
     CREATE_USER,
     LOGOUT_USER,
-    SIGNIN_USER,
+    LOGIN_REQUEST,
+    LOGIN_SUCCESS,
+    LOGIN_FAILURE,
     CREATE_COURSE,
     GET_COURSES,
     GET_SINGLE_COURSE,
@@ -20,71 +22,46 @@ import {
 } from './types';
 
 
-export const signinUser = (formData) => async (dispatch, getState, api) => {
+export const loginUser = (formData) => async (dispatch, getState, api) => {
 
-    // /* Initialize with an empty reducer - the user might test your login system and
-    // login and logout several times. If you don't empty the reducer, then it wont work properly.*/
-    // dispatch({
-    //     type: SIGNIN_USER,
-    //     payload: null
-    // });
+    // Initialize the request as loading 
+    dispatch({
+        type: LOGIN_REQUEST,
+        payload: {
+            data: {
+                status: 205, 
+                message: "...Loading"
+            }
+        }
+    });
 
     // Make connection to the API proxy
-    await api.post('/users/login', {
+    api.post('/users/login', {
         data: formData
     }).then((res) => {
         if (res.status === 200) {
-
-            // // If there is a user, then we want to get the auth
-            // api.get('/users/auth')
-            // .then((res) => {
-            //     if (res.status === 200) {
-            //         localStorage.setItem('user', res);
-            //     }
-            //     return res;
-            // });
-
-
             dispatch({
-                type: SIGNIN_USER,
+                type: LOGIN_SUCCESS,
                 payload: res
             });
 
-            // This is where we set a cookie on the client side
-          
-
-            // let str = res.data.userCookie;
-            // str = str.split('=');
-            
-            // setCookie(str[0], str[1], 7);
-        
-            setTimeout(() => {
-                window.location.href = "/";
-            }, 2000);
         } else {
-           
+           // Some unkown error has happend...
         }
     }).catch((err) => {
         if (err.response) {
-            /* Initialize with an empty reducer - the user might test your login system and
-            login and logout several times. If you don't empty the reducer, then it wont work properly.*/
-            dispatch({
-                type: SIGNIN_USER,
-                payload: null
-            });
-            const data = err.response.data;
-            if (data) {
+            const res = err.response.data;
+            if (res) {
                 dispatch({
-                    type: SIGNIN_USER,
-                    payload: data
+                    type: LOGIN_FAILURE,
+                    payload: {
+                        data: res
+                    }
                 });
             }
         }
     });
 }
-
-
-
 
 export const userAuth = () => async (dispatch, getState, api) => {        
     

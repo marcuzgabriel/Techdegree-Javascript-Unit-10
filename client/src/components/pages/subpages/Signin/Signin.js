@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { signinUser } from '../../../actions';
+import { loginUser } from '../../../actions';
 import { connect } from 'react-redux';
 
 // import components
@@ -20,8 +20,8 @@ class Signin extends Component {
                     <h1>Sign In</h1>
                     <div>
                         <SigninForm 
-                            signinUserReducer={this.props.signinUser} // Signin user reducer
-                            signinUserState={this.props.signin} // Check the user state
+                            loginUserReducer={this.props.loginUser} // Signin user reducer
+                            loginUserState={this.props.login} // Check the user state
                             getUserAuth={this.props.userAuth}
                             auth={this.props.auth}
                         />
@@ -38,10 +38,14 @@ class Signin extends Component {
     }
 }
  
-function mapStateToProps({auth, logout, signin}) {
-    return { auth, logout, signin };
+function mapStateToProps({auth, logout, login}) {
+    return { 
+        auth, 
+        logout,
+        login
+    };
 }
 
 export default {
-    component: connect(mapStateToProps, { signinUser })(Signin)
+    component: connect(mapStateToProps, { loginUser })(Signin)
 }
